@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("KADER") // ADMIN atau KADER
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Sasaran {
+  id           String   @id @default(cuid())
+  kategori     String   // balita, ibu_hamil, lansia
+  nama         String
+  nik          String?
+  tglLahir     DateTime
+  jk           String?  // L atau P
+  namaIbu      String?
+  hp           String?
+  alamat       String?
+  catatan      String?
+  
+  // Khusus Ibu Hamil
+  usiaHamil    Int?
+  hpht         DateTime?
+
+  pemeriksaan  Pemeriksaan[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Pemeriksaan {
+  id           String   @id @default(cuid())
+  sasaranId    String
+  sasaran      Sasaran  @relation(fields: [sasaranId], references: [id], onDelete: Cascade)
+  tanggal      DateTime
+  
+  // Umum
+  catatan      String?
+  statusGizi   String?
+
+  // Balita
+  bb           Float?
+  tb           Float?
+  lk           Float?
+  lila         Float?
+  imunisasi    String?
+  vitamin      String?
+
+  // Ibu Hamil
+  td           String?
+  fundus       Float?
+  lilaBumil    Float?
+  djj          Int?
+  fe           String? // Ya / Tidak
+
+  // Lansia
+  bbLansia     Float?
+  tdLansia     String?
+  gula         Int?
+  kolesterol   Int?
+  asamUrat     Float?
+  keluhan      String?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
